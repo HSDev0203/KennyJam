@@ -3,6 +3,7 @@ from sys import exit
 
 from enemy import Enemy
 from player import Player
+from dialogue import DialogueManager
 
 pygame.init()
 
@@ -16,6 +17,10 @@ player = Player((400, 300))
 enemy = Enemy((100, 100), player)
 all_sprites.add(player, enemy)
 
+dialogue_manager = DialogueManager(screen)
+dialogue_manager.runningDialogues = dialogue_manager.introDiologues
+
+running = True
 
 while running:
     dt = clock.tick(60)
@@ -28,6 +33,8 @@ while running:
     # Update
     player.update(keys)
     enemy.update()
+    dialogue_manager.update()
+
 
     # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
@@ -36,6 +43,7 @@ while running:
     # Draw
     screen.fill("white")
     all_sprites.draw(screen)
+    dialogue_manager.draw()
     pygame.display.flip()
 
 pygame.quit()
