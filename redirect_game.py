@@ -29,7 +29,6 @@ bee = Animator(screen, beeAnimation, player, 10)
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 
-running = True
 
 running = True
 while running:
@@ -57,9 +56,14 @@ while running:
     # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
         print("Collision!")
+    for projectile in enemy_bullets:
+        if player.pos.distance_to(projectile.pos) < player.grab_rad:
+            print('In Radius')
+            
 
     # Draw
     screen.fill("white")
+    grab_indicator = pygame.draw.circle(screen, (0, 0, 0), player.pos, player.grab_rad, 5)
     all_sprites.draw(screen)
     enemy_bullets.draw(screen)
     bee.play()

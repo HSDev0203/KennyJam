@@ -15,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         self.is_dashing = False
         self.direction = pygame.Vector2(0, 0)
 
+        self.grab_rad = 75
+
     def update(self, keys):
         now = pygame.time.get_ticks()
         if now - self.last_dash >= self.dash_delay:
