@@ -1,3 +1,4 @@
+from ctypes.wintypes import HDC
 from tkinter import dialog
 import pygame
 from sys import exit
@@ -7,6 +8,7 @@ from enemy import Enemy
 from player import Player
 from bullet import Bullet
 from dialogue import DialogueManager
+from hud import Hud
 
 pygame.init()
 
@@ -16,12 +18,14 @@ clock = pygame.time.Clock()
 
 
 all_sprites = pygame.sprite.Group()
-player = Player((400, 300))
 enemy_bullets = pygame.sprite.Group()
+hurt_group = pygame.sprite.Group()
+player = Player((400, 300), hurt_group)
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
-enemies = pygame.sprite.Group()
-enemies.add(enemy)
+hurt_group.add(enemy, enemy_bullets)
+
+hud = Hud(player, screen)
 
 beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
 bee = Animator(screen, beeAnimation, player, 10)
@@ -49,12 +53,7 @@ while running:
     enemy_bullets.update()
     dialogue_manager.update()
     
-    # Check collision between player and enemies
-    hits = pygame.sprite.spritecollide(player,enemies, False)
-    if hits:
-        player.health -= 1  # Apply damage
-    
-    # Collision detection (basic bounding box for now)
+        # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
         print("Collision!")
 
@@ -64,6 +63,7 @@ while running:
     enemy_bullets.draw(screen)
     bee.play()
     dialogue_manager.draw()
+    hud.draw()
     pygame.display.flip()
 
 pygame.quit()
