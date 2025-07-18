@@ -4,6 +4,7 @@ from sys import exit
 from enemy import Enemy
 from player import Player
 from bullet import Bullet
+from dialogue import DialogueManager
 
 pygame.init()
 
@@ -18,6 +19,10 @@ enemy_bullets = pygame.sprite.Group()
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
 
+dialogue_manager = DialogueManager(screen)
+dialogue_manager.runningDialogues = dialogue_manager.introDiologues
+
+running = True
 
 running = True
 while running:
