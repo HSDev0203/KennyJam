@@ -2,6 +2,7 @@ from tkinter import dialog
 import pygame
 from sys import exit
 
+from animation import Animator
 from enemy import Enemy
 from player import Player
 from bullet import Bullet
@@ -19,6 +20,11 @@ player = Player((400, 300))
 enemy_bullets = pygame.sprite.Group()
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
+enemies = pygame.sprite.Group()
+enemies.add(enemy)
+
+beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
+bee = Animator(screen, beeAnimation, player, 10)
 
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
@@ -42,7 +48,12 @@ while running:
     enemy.update()
     enemy_bullets.update()
     dialogue_manager.update()
-
+    
+    # Check collision between player and enemies
+    hits = pygame.sprite.spritecollide(player,enemies, False)
+    if hits:
+        player.health -= 1  # Apply damage
+    
     # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
         print("Collision!")
@@ -51,6 +62,7 @@ while running:
     screen.fill("white")
     all_sprites.draw(screen)
     enemy_bullets.draw(screen)
+    bee.play()
     dialogue_manager.draw()
     pygame.display.flip()
 
