@@ -1,3 +1,4 @@
+from tkinter import dialog
 import pygame
 from sys import exit
 
@@ -37,6 +38,7 @@ while running:
     player.update(keys)
     enemy.update()
     enemy_bullets.update()
+    dialogue_manager.update()
 
     # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
@@ -46,6 +48,7 @@ while running:
     screen.fill("white")
     all_sprites.draw(screen)
     enemy_bullets.draw(screen)
+    dialogue_manager.draw()
     pygame.display.flip()
 
 pygame.quit()
