@@ -33,6 +33,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RSHIFT or event.key == pygame.K_LSHIFT:
+                print(f'{pygame.mouse.get_pos()[0]} is x')
 
     # Update
     player.update(keys)
