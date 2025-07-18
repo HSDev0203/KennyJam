@@ -7,6 +7,7 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((0, 255, 0))  # Green
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.Vector2(pos)
+        self.health = 3
         self.speed = 5
 
     def update(self, keys):
