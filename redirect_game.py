@@ -2,6 +2,7 @@ from tkinter import dialog
 import pygame
 from sys import exit
 
+from animation import Animator
 from enemy import Enemy
 from player import Player
 from bullet import Bullet
@@ -19,6 +20,9 @@ player = Player((400, 300))
 enemy_bullets = pygame.sprite.Group()
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
+
+beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
+bee = Animator(screen, beeAnimation, player, 10)
 
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
@@ -48,6 +52,7 @@ while running:
     screen.fill("white")
     all_sprites.draw(screen)
     enemy_bullets.draw(screen)
+    bee.play()
     dialogue_manager.draw()
     pygame.display.flip()
 
