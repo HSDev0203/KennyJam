@@ -1,10 +1,11 @@
 import time
 import pygame
+from bullet import Bullet
 
 from bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, hurt_group):
+    def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group):
         super().__init__()
         self.image = pygame.Surface((40, 40))
         self.image.fill((0, 255, 0))  # Green
@@ -21,6 +22,11 @@ class Player(pygame.sprite.Sprite):
         self.dash_delay = 500
         self.is_dashing = False
         self.direction = pygame.Vector2(0, 0)
+
+        self.grab_rad = 90
+        self.holding_bullet = holding_bullet
+        self.player_bullets_group = player_bullets_group
+        self.all_sprites_group = all_sprites_group
 
     def update(self, keys):
         now = pygame.time.get_ticks()
@@ -66,6 +72,25 @@ class Player(pygame.sprite.Sprite):
             if hits_bullet and self.health > 0 and now - self.last_hit > self.invinsibility_time:
                 self.health -= 1  # Apply damage
                 self.last_hit = pygame.time.get_ticks()
+
+
+    def redirect(self):
+        # 1. Get the mouse position
+        mouse_pos = pygame.mouse.get_pos()
+        
+        # 2. Calculate direction vector from player to mouse
+        direction = pygame.Vector2(mouse_pos) - self.pos
+        if direction.length_squared() == 0:
+            direction = pygame.Vector2(1, 0)  # Prevent zero-length vector
+        direction = direction.normalize()
+        
+        # 3. Create new bullet moving in that direction
+        bullet_speed = 6
+        bullet = Bullet(self.pos, direction * bullet_speed)  # Pass screen bounds
+        
+        # 4. Add to sprite groups
+        self.player_bullets_group.add(bullet)
+        self.all_sprites_group.add(bullet)
 
 
 

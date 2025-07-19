@@ -15,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         if type == 'melee':
             self.speed = 2.5
         elif type == 'ranged':
-            self.speed = 1
+            self.speed = 0.5
 
         self.last_shot = 0
         self.shoot_delay = 1000
