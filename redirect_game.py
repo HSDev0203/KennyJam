@@ -9,6 +9,7 @@ from player import Player
 from bullet import Bullet
 from dialogue import DialogueManager
 from hud import Hud
+from gameManager import GameManager
 
 pygame.init()
 
@@ -20,12 +21,15 @@ clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
 hurt_group = pygame.sprite.Group()
+enemies = pygame.sprite.Group()
+
 player = Player((400, 300), hurt_group)
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
-hurt_group.add(enemy, enemy_bullets)
+hurt_group.add(enemies, enemy_bullets, enemy)
 
 hud = Hud(player, screen)
+gameManager = GameManager(player, enemy_bullets, enemies, hurt_group)
 
 beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
 bee = Animator(screen, beeAnimation, player, 10)
@@ -35,7 +39,6 @@ dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 
 running = True
 
-running = True
 while running:
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
@@ -52,14 +55,18 @@ while running:
     enemy.update()
     enemy_bullets.update()
     dialogue_manager.update()
+    gameManager.update()
+    enemies.update()
     
-        # Collision detection (basic bounding box for now)
+    # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
         print("Collision!")
 
     # Draw
+    
     screen.fill("white")
     all_sprites.draw(screen)
+    enemies.draw(screen)
     enemy_bullets.draw(screen)
     bee.play()
     dialogue_manager.draw()

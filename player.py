@@ -1,6 +1,8 @@
 import time
 import pygame
 
+from bullet import Bullet
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, hurt_group):
         super().__init__()
@@ -11,9 +13,10 @@ class Player(pygame.sprite.Sprite):
         self.health = 3
         self.speed = 5
         self.hurt_group = hurt_group
+        self.enemy_wave = 1
 
         self.last_hit = 0 
-        self.invinsibility_time = 5000
+        self.invinsibility_time = 1500
         self.last_dash = 0
         self.dash_delay = 500
         self.is_dashing = False
@@ -52,10 +55,18 @@ class Player(pygame.sprite.Sprite):
             self.pos += self.direction * self.speed
             self.rect.center = self.pos
         # Check collision between player and enemies
-        hits = pygame.sprite.spritecollide(self,self.hurt_group, False)
-        if hits and self.health > 0 and now - self.last_hit > self.invinsibility_time:
+        hits_enemy = pygame.sprite.spritecollide(self,self.hurt_group, False)
+
+        if hits_enemy and self.health > 0 and now - self.last_hit > self.invinsibility_time:
             self.health -= 1  # Apply damage
             self.last_hit = pygame.time.get_ticks()
+        for sprite in self.hurt_group:
+            hits_bullet = pygame.sprite.spritecollide(self, sprite.enemy_bullets, True)
+            
+            if hits_bullet and self.health > 0 and now - self.last_hit > self.invinsibility_time:
+                self.health -= 1  # Apply damage
+                self.last_hit = pygame.time.get_ticks()
+
 
 
     
