@@ -1,13 +1,17 @@
 import pygame
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos, direction, speed=5, grabbable=False, owner='enemy'):
+    def __init__(self, pos, direction, size=5, speed=5, grabbable=False, owner='enemy'):
         super().__init__()
         self.image = pygame.Surface((10, 10), pygame.SRCALPHA)
-        
+
         # Color by owner
-        color = (0, 0, 255) if owner == 'enemy' else (0, 255, 0)
-        pygame.draw.circle(self.image, color, (5, 5), 5)
+        if owner == 'enemy':
+            color =(0, 0, 255)
+        else:
+            color = (0, 255, 0)
+        self.size = size
+        pygame.draw.circle(self.image, color, (5, 5), self.size)
         
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.Vector2(pos)

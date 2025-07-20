@@ -24,10 +24,10 @@ player_bullets = pygame.sprite.Group()
 hurt_group = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 
-player = Player((400, 300), hurt_group, False, player_bullets, all_sprites)
+player = Player((400, 300), hurt_group, False, player_bullets, all_sprites, enemy_group=enemies)
 enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
 all_sprites.add(player, enemy)
-hurt_group.add(enemies, enemy_bullets, enemy)
+hurt_group.add(enemy, enemy_bullets)
 
 hud = Hud(player, screen)
 gameManager = GameManager(player, enemy_bullets, enemies, hurt_group)
@@ -39,7 +39,7 @@ dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 
 
-
+running = True
 while running:
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
@@ -59,6 +59,8 @@ while running:
             if player.holding_bullet:
                 player.redirect()
                 player.holding_bullet = False
+                player.circle_completed = False
+                player.mouse_path.clear()
 
 
 
@@ -79,20 +81,19 @@ while running:
             if player.pos.distance_to(projectile.pos) < player.grab_rad:
                 projectile.grabbable = True
                 bul_in_rad = True
-            
 
 
     # Draw
-    
     screen.fill("white")
+    
     if player.holding_bullet:
         grab_indicator = pygame.draw.circle(screen, 'Red', player.pos, 75)
-        print('red indicator')
+        if len(player.mouse_path) > 1:
+            pygame.draw.lines(screen, 'Black', False, player.mouse_path, 2)
     elif bul_in_rad:
         grab_indicator = pygame.draw.circle(screen, 'Orange', player.pos, 75)
     else:
         grab_indicator = pygame.draw.circle(screen, 'White', player.pos, 75)
-        print('white indicator')
     grab_indicator_outline = pygame.draw.circle(screen, 'Black', player.pos, 75, 5)
     all_sprites.draw(screen)
     enemies.draw(screen)

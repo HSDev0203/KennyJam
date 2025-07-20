@@ -1,11 +1,13 @@
 import time
 import pygame
 from bullet import Bullet
+from utilities import is_circle
+from utilities import calculate_circularity
+from utilities import circularity_to_accuracy
 
-from bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group):
+    def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group, enemy_group):
         super().__init__()
         self.image = pygame.Surface((40, 40))
         self.image.fill((0, 255, 0))  # Green
@@ -16,17 +18,28 @@ class Player(pygame.sprite.Sprite):
         self.hurt_group = hurt_group
         self.enemy_wave = 1
 
+        # Invinsibility
         self.last_hit = 0 
         self.invinsibility_time = 1500
+
+        # Movement Related
         self.last_dash = 0
         self.dash_delay = 500
         self.is_dashing = False
         self.direction = pygame.Vector2(0, 0)
 
+        # Redirecting Bullets
         self.grab_rad = 90
         self.holding_bullet = holding_bullet
         self.player_bullets_group = player_bullets_group
         self.all_sprites_group = all_sprites_group
+        self.enemy_group = enemy_group
+
+        # Drawing Paths
+        self.mouse_path = []       # List of (x, y) points
+        self.max_path_length = 100  # Only keep the last 100 positions
+        self.circle_completed = False
+
 
     def update(self, keys):
         now = pygame.time.get_ticks()
@@ -44,10 +57,10 @@ class Player(pygame.sprite.Sprite):
 
         
         if (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and cooldown: 
-            dx = pygame.mouse.get_pos()[0] - self.pos.x
-            dy = pygame.mouse.get_pos()[1] - self.pos.y
-            self.direction.x = dx / ((dx**2 + dy**2)**0.5)
-            self.direction.y = dy / ((dx**2 + dy**2)**0.5)
+            # dx = pygame.mouse.get_pos()[0] - self.pos.x
+            # dy = pygame.mouse.get_pos()[1] - self.pos.y
+            # self.direction.x = dx / ((dx**2 + dy**2)**0.5)
+            # self.direction.y = dy / ((dx**2 + dy**2)**0.5)
             self.speed = 20
             self.is_dashing = True
             self.last_dash = pygame.time.get_ticks()
@@ -68,27 +81,68 @@ class Player(pygame.sprite.Sprite):
             self.last_hit = pygame.time.get_ticks()
         for sprite in self.hurt_group:
             hits_bullet = pygame.sprite.spritecollide(self, sprite.enemy_bullets, True)
-            
             if hits_bullet and self.health > 0 and now - self.last_hit > self.invinsibility_time:
                 self.health -= 1  # Apply damage
                 self.last_hit = pygame.time.get_ticks()
+        
+        if self.holding_bullet:
+            self.mouse_path.append(pygame.mouse.get_pos())
+            if len(self.mouse_path) > self.max_path_length:
+                self.mouse_path.pop(0)
+            if not self.circle_completed:
+                if is_circle(self.mouse_path):
+                    print("Circle complete!")
+                    self.circle_completed = True
 
+    def get_nearest_enemy(self):
+        nearest = None
+        min_distance = float('inf')
 
+        for enemy in self.enemy_group:
+            dist = self.pos.distance_to(enemy.pos)
+            if dist < min_distance:
+                nearest = enemy
+                min_distance = dist
+        
+        return nearest
+
+    
     def redirect(self):
-        # 1. Get the mouse position
+        if not self.circle_completed:
+            print("You must complete the circle before redirecting!")
+            return
+        
+        '''
+        # Get the mouse position
         mouse_pos = pygame.mouse.get_pos()
         
-        # 2. Calculate direction vector from player to mouse
+        # Calculate direction vector from player to mouse
         direction = pygame.Vector2(mouse_pos) - self.pos
         if direction.length_squared() == 0:
             direction = pygame.Vector2(1, 0)  # Prevent zero-length vector
         direction = direction.normalize()
+        '''
+
+        nearest = self.get_nearest_enemy()
+        if nearest:
+            direction = nearest.pos - self.pos
+        else:
+            print("No enemies found — firing straight!")
+            direction = pygame.Vector2(1, 0)
         
-        # 3. Create new bullet moving in that direction
-        bullet_speed = 6
-        bullet = Bullet(self.pos, direction * bullet_speed)  # Pass screen bounds
+        # Create new bullet moving in that direction with speed based on circle accuracy
+        circle_score = calculate_circularity(self.mouse_path)
+        accuracy = circularity_to_accuracy(circle_score)
+        min_speed = 2
+        max_speed = 20
+        bullet_speed = min_speed + (accuracy) * (max_speed - min_speed)
+        min_size = 2
+        max_size = 20
+        bullet_size = min_size + (accuracy) * (max_size - min_size)
+
+        bullet = Bullet(self.pos, direction, bullet_size, bullet_speed, grabbable=False, owner='player')
         
-        # 4. Add to sprite groups
+        # Add to sprite groups
         self.player_bullets_group.add(bullet)
         self.all_sprites_group.add(bullet)
 
