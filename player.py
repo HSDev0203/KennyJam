@@ -135,10 +135,10 @@ class Player(pygame.sprite.Sprite):
         circle_score = calculate_circularity(self.mouse_path)
         accuracy = circularity_to_accuracy(circle_score)
         min_speed = 2
-        max_speed = 20
+        max_speed = 8
         bullet_speed = min_speed + (accuracy) * (max_speed - min_speed)
-        min_size = 2
-        max_size = 20
+        min_size = 20
+        max_size = 40
         bullet_size = min_size + (accuracy) * (max_size - min_size)
 
         bullet = Bullet(self.pos, direction, bullet_size, bullet_speed, grabbable=False, owner='player')

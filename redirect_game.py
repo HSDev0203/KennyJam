@@ -132,7 +132,7 @@ while running:
     if player.holding_bullet:
         grab_indicator = pygame.draw.circle(screen, 'Red', player.pos, 75)
         if len(player.mouse_path) > 1:
-            pygame.draw.lines(screen, 'Black', False, player.mouse_path, 2)
+            pygame.draw.lines(screen, 'Black', False, player.mouse_path, 5)
     elif bul_in_rad:
         grab_indicator = pygame.draw.circle(screen, 'Orange', player.pos, 75)
     else:
