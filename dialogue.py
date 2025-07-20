@@ -4,7 +4,11 @@ class DialogueManager:
     def __init__(self, screen):
         
         self.screen = screen
-        self.introDiologues = ["Hello Welcome to POWER", "I like neal"]
+        self.introDiologues = ["Welcome to the game of REDIRECTION! (press space to continue)", 
+                               "In this game, you use your enemy's power against them...",
+                               "press E to grab an enemy's bullet once they are within your grab radius...",
+                               "then, draw the best circle you can to REDIRECT their attack back at them!",
+                               "Have fun and good luck! (press space to start)"]
         self.runningDialogues = []
 
 
