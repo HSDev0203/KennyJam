@@ -39,7 +39,7 @@ bee = Animator(screen, beeAnimation, player, 10)
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 dialog_key = False
-
+game_over = False
 
 running = True
 while running:
@@ -66,12 +66,37 @@ while running:
         if(event.type == pygame.KEYDOWN):
             if(event.key == pygame.K_SPACE):
                 dialog_key = True
-        
+            if(event.key == pygame.K_r):
+                clock = pygame.time.Clock()
+                intro = True
 
+                all_sprites = pygame.sprite.Group()
+                enemy_bullets = pygame.sprite.Group()
+                player_bullets = pygame.sprite.Group()
+                hurt_group = pygame.sprite.Group()
+                enemies = pygame.sprite.Group()
+
+                player = Player((400, 300), hurt_group, False, player_bullets, all_sprites, enemy_group=enemies)
+                enemy = Enemy((100, 100), player, 'ranged', enemy_bullets, player_bullets)
+                all_sprites.add(player, enemy)
+                hurt_group.add(enemy, enemy_bullets)
+
+                hud = Hud(player, screen)
+                gameManager = GameManager(player, enemy_bullets, player_bullets, enemies, hurt_group)
+
+                beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
+                bee = Animator(screen, beeAnimation, player, 10)
+
+                dialogue_manager = DialogueManager(screen)
+                dialogue_manager.runningDialogues = dialogue_manager.introDiologues
+                dialog_key = False
+                game_over = False
+            
+            
 
 
     # Update
-    if intro == False:
+    if intro == False and game_over == False:
         player.update(keys)
         enemy.update()
         enemy_bullets.update()
@@ -98,6 +123,10 @@ while running:
 
     # Draw
     screen.fill("white")
+    red_overlay = pygame.Surface((800, 600), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
+    
+    if game_over:
+        red_overlay.fill((255, 0, 0, 128))  # RGBA (last value is alpha: 0=transparent, 255=opaque)
     
     if player.holding_bullet:
         grab_indicator = pygame.draw.circle(screen, 'Red', player.pos, 75)
