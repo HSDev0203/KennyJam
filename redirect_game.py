@@ -1,5 +1,6 @@
-from ctypes.wintypes import HDC
 from tkinter import dialog
+from tkinter.filedialog import dialogstates
+from numpy import append
 import pygame
 from sys import exit
 
@@ -16,7 +17,7 @@ pygame.init()
 screen = pygame.display.set_mode((800,800))
 pygame.display.set_caption("Power Redirect")
 clock = pygame.time.Clock()
-
+intro = True
 
 all_sprites = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
@@ -25,21 +26,22 @@ hurt_group = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 
 player = Player((400, 300), hurt_group, False, player_bullets, all_sprites)
-enemy = Enemy((100, 100), player, 'ranged', enemy_bullets)
+enemy = Enemy((100, 100), player, 'ranged', enemy_bullets, player_bullets)
 all_sprites.add(player, enemy)
 hurt_group.add(enemies, enemy_bullets, enemy)
 
 hud = Hud(player, screen)
-gameManager = GameManager(player, enemy_bullets, enemies, hurt_group)
+gameManager = GameManager(player, enemy_bullets, player_bullets, enemies, hurt_group)
 
 beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
 bee = Animator(screen, beeAnimation, player, 10)
 
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
+dialog_key = False
 
 
-
+running = True
 while running:
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
@@ -59,21 +61,32 @@ while running:
             if player.holding_bullet:
                 player.redirect()
                 player.holding_bullet = False
+        if(event.type == pygame.KEYDOWN):
+            if(event.key == pygame.K_SPACE):
+                dialog_key = True
+        
 
 
 
     # Update
-    player.update(keys)
-    enemy.update()
-    enemy_bullets.update()
-    player_bullets.update()
-    dialogue_manager.update()
-    gameManager.update()
-    enemies.update()
+    if intro == False:
+        player.update(keys)
+        enemy.update()
+        enemy_bullets.update()
+        player_bullets.update()
+        gameManager.update()
+        enemies.update()
+    
+    dialogue_manager.update(dialog_key)
+    
+    if dialogue_manager.running != True:
+        intro = False
+    dialog_key = False
     
     # Collision detection (basic bounding box for now)
     if pygame.sprite.collide_rect(player, enemy):
         print("Collision!")
+        
     if not player.holding_bullet:
         for projectile in enemy_bullets:
             if player.pos.distance_to(projectile.pos) < player.grab_rad:

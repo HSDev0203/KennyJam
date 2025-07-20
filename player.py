@@ -37,10 +37,11 @@ class Player(pygame.sprite.Sprite):
 
         if not self.is_dashing:
             self.direction = pygame.Vector2(0, 0)
-            if keys[pygame.K_w]: self.direction.y = -1
-            if keys[pygame.K_s]: self.direction.y = 1
-            if keys[pygame.K_a]: self.direction.x = -1
-            if keys[pygame.K_d]: self.direction.x = 1
+
+            if keys[pygame.K_w] and self.pos.y > 0: self.direction.y = -1
+            if keys[pygame.K_s] and self.pos.y < 800: self.direction.y = 1
+            if keys[pygame.K_a] and self.pos.x > 0 : self.direction.x = -1
+            if keys[pygame.K_d] and self.pos.x < 800: self.direction.x = 1
 
         
         if (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and cooldown: 
