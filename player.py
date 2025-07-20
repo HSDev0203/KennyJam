@@ -9,8 +9,8 @@ from utilities import circularity_to_accuracy
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group, enemy_group):
         super().__init__()
-        self.image = pygame.Surface((40, 40))
-        self.image.fill((0, 255, 0))  # Green
+        self.image = pygame.image.load("Assets/tile_0105.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (32, 32))
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.Vector2(pos)
         self.health = 3
@@ -137,9 +137,9 @@ class Player(pygame.sprite.Sprite):
         min_speed = 2
         max_speed = 8
         bullet_speed = min_speed + (accuracy) * (max_speed - min_speed)
-        min_size = 20
-        max_size = 40
-        bullet_size = min_size + (accuracy) * (max_size - min_size)
+        min_size = 1
+        max_size = 6
+        bullet_size = int(min_size + (accuracy) * (max_size - min_size))
 
         bullet = Bullet(self.pos, direction, bullet_size, bullet_speed, grabbable=False, owner='player')
         

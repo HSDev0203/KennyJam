@@ -19,6 +19,9 @@ pygame.display.set_caption("Power Redirect")
 clock = pygame.time.Clock()
 intro = True
 
+ground_tile = pygame.image.load("Assets/tile_0100.png")
+ground_tile = pygame.transform.scale(ground_tile, (32, 32))
+
 all_sprites = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
 player_bullets = pygame.sprite.Group()
@@ -26,15 +29,11 @@ hurt_group = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 
 player = Player((400, 300), hurt_group, False, player_bullets, all_sprites, enemy_group=enemies)
-enemy = Enemy((100, 100), player, 'ranged', enemy_bullets, player_bullets)
-all_sprites.add(player, enemy)
-hurt_group.add(enemy, enemy_bullets)
+all_sprites.add(player)
+hurt_group.add(enemy_bullets)
 
 hud = Hud(player, screen)
 gameManager = GameManager(player, enemy_bullets, player_bullets, enemies, hurt_group)
-
-beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
-bee = Animator(screen, beeAnimation, player, 10)
 
 dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
@@ -77,15 +76,11 @@ while running:
                 enemies = pygame.sprite.Group()
 
                 player = Player((400, 300), hurt_group, False, player_bullets, all_sprites, enemy_group=enemies)
-                enemy = Enemy((100, 100), player, 'ranged', enemy_bullets, player_bullets)
-                all_sprites.add(player, enemy)
-                hurt_group.add(enemy, enemy_bullets)
+                all_sprites.add(player)
+                hurt_group.add(enemy_bullets)
 
                 hud = Hud(player, screen)
                 gameManager = GameManager(player, enemy_bullets, player_bullets, enemies, hurt_group)
-
-                beeAnimation = [pygame.image.load("bee_animation/bee_a.png"), pygame.image.load("bee_animation/bee_b.png")]
-                bee = Animator(screen, beeAnimation, player, 10)
 
                 dialogue_manager = DialogueManager(screen)
                 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
@@ -98,7 +93,6 @@ while running:
     # Update
     if intro == False and game_over == False:
         player.update(keys)
-        enemy.update()
         enemy_bullets.update()
         player_bullets.update()
         gameManager.update()
@@ -109,10 +103,6 @@ while running:
     if dialogue_manager.running != True:
         intro = False
     dialog_key = False
-    
-    # Collision detection (basic bounding box for now)
-    if pygame.sprite.collide_rect(player, enemy):
-        print("Collision!")
         
     if not player.holding_bullet:
         for projectile in enemy_bullets:
@@ -123,6 +113,11 @@ while running:
 
     # Draw
     screen.fill("white")
+    for row in range(25):
+        for col in range(25):
+            x = col * 32
+            y = row * 32
+            screen.blit(ground_tile, (x, y))
     red_overlay = pygame.Surface((800, 600), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
     
     if game_over:
@@ -135,12 +130,16 @@ while running:
     elif bul_in_rad:
         grab_indicator = pygame.draw.circle(screen, 'Orange', player.pos, 75)
     else:
-        grab_indicator = pygame.draw.circle(screen, 'White', player.pos, 75)
+        pass
     grab_indicator_outline = pygame.draw.circle(screen, 'Black', player.pos, 75, 5)
     all_sprites.draw(screen)
     enemies.draw(screen)
     enemy_bullets.draw(screen)
-    bee.play()
+    '''
+    for projectile in enemy_bullets:
+        if projectile.animation:
+            projectile.animation.play()
+    '''
     dialogue_manager.draw()
     hud.draw()
     pygame.display.flip()

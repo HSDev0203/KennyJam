@@ -4,8 +4,16 @@ from bullet import Bullet
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, target, type, bullet_group, hurt_group):
         super().__init__()
-        self.image = pygame.Surface((40, 40))
-        self.image.fill((255, 0, 0))  # Red
+
+        if type == 'melee':
+            self.image = pygame.image.load("Assets/tile_0115.png").convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.speed = 2.5
+        elif type == 'ranged':
+            self.speed = 0.5
+            self.image = pygame.image.load("Assets/tile_0114.png").convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.Vector2(pos)
         self.target = target
@@ -13,11 +21,6 @@ class Enemy(pygame.sprite.Sprite):
         self.destroyed = False
         self.enemy_bullets = bullet_group
         self.hurt_group = hurt_group
-
-        if type == 'melee':
-            self.speed = 2.5
-        elif type == 'ranged':
-            self.speed = 0.5
 
         self.last_shot = 0
         self.shoot_delay = 1000
