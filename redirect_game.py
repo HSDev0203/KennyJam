@@ -93,7 +93,8 @@ while running:
                 game_over = False
             
             
-
+    if(player.health <= 0):
+        game_over = True
 
     # Update
     if intro == False and game_over == False:
