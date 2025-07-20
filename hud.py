@@ -10,6 +10,8 @@ class Hud:
     heart_position = (10, 10)
     heart_image_full = pygame.image.load("hud_heart/hud_heart.png")
     heart_image_empty = pygame.image.load("hud_heart/hud_heart_empty.png")
+    heart_image_full = pygame.transform.scale(heart_image_full, (64,64 ))
+    heart_image_empty = pygame.transform.scale(heart_image_empty, (64, 64))
 
     def draw(self):
         if self.player.health == 3:

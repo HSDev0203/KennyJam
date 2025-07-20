@@ -40,9 +40,22 @@ dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 dialog_key = False
 game_over = False
+score = 0
+
+game_over_font = pygame.font.Font("Assets/fonts/P8.ttf", 75)
+score_font = pygame.font.Font("Assets/fonts/P8.ttf", 20)
+
+game_over_text_surface_1 = game_over_font.render("GAME OVER", True, (0, 0, 0))
+game_over_text_surface_2 = game_over_font.render("press r to restart", True, (0, 0, 0))
+score_text_surface = score_font.render(f"Score:{score}", True, (0, 0, 0))
+
+game_over_text_surface_1_rect = game_over_text_surface_1.get_rect(center = (400,350))
+game_over_text_surface_2_rect = game_over_text_surface_2.get_rect(center = (400,450))
+score_text_rect = score_text_surface.get_rect(topright = (700, 0)) 
 
 running = True
 while running:
+    score_text_surface = score_font.render(f"Score: {(score)}", True, (0, 0, 0))
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
     bul_in_rad = False
@@ -69,6 +82,7 @@ while running:
             if(event.key == pygame.K_r):
                 clock = pygame.time.Clock()
                 intro = True
+                score = 0
 
                 all_sprites = pygame.sprite.Group()
                 enemy_bullets = pygame.sprite.Group()
@@ -97,7 +111,9 @@ while running:
         game_over = True
 
     # Update
+
     if intro == False and game_over == False:
+        score += 1
         player.update(keys)
         enemy.update()
         enemy_bullets.update()
@@ -124,11 +140,14 @@ while running:
 
     # Draw
     screen.fill("white")
-    red_overlay = pygame.Surface((800, 600), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
+    red_overlay = pygame.Surface((800, 800), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
     
-    if game_over:
+    if game_over == True:
         red_overlay.fill((255, 0, 0, 128))  # RGBA (last value is alpha: 0=transparent, 255=opaque)
-    
+        
+        screen.blit(red_overlay, (0, 0))
+
+            
     if player.holding_bullet:
         grab_indicator = pygame.draw.circle(screen, 'Red', player.pos, 75)
         if len(player.mouse_path) > 1:
@@ -144,6 +163,13 @@ while running:
     bee.play()
     dialogue_manager.draw()
     hud.draw()
+
+    if game_over == True:
+
+        screen.blit(game_over_text_surface_1, game_over_text_surface_1_rect)
+        screen.blit(game_over_text_surface_2, game_over_text_surface_2_rect)
+
+    screen.blit(score_text_surface, score_text_rect)
     pygame.display.flip()
 
 pygame.quit()

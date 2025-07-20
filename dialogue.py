@@ -6,8 +6,9 @@ class DialogueManager:
         self.screen = screen
         self.introDiologues = ["Welcome to the game of REDIRECTION! (press space to continue)", 
                                "In this game, you use your enemy's power against them...",
-                               "press E to grab an enemy's bullet once they are within your grab radius...",
-                               "then, draw the best circle you can to REDIRECT their attack back at them!",
+                               "press E to grab an enemy's bullet within your grab radius...",
+                               "then, draw the best circle you can to REDIRECT",
+                                "their attack back at them!",
                                "Have fun and good luck! (press space to start)"]
         self.runningDialogues = []
 
@@ -17,7 +18,7 @@ class DialogueManager:
         self.BLACK = (0, 0, 0)
 
         # Font
-        self.font = pygame.font.SysFont("arial", 24)
+        self.font = pygame.font.Font("Assets/fonts/P8.ttf", 20)
 
         self.current_line = 0
 
