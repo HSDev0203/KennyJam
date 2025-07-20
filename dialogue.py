@@ -9,6 +9,7 @@ class DialogueManager:
                                "press E to grab an enemy's bullet within your grab radius...",
                                "then, draw the best circle you can to REDIRECT",
                                 "their attack back at them!",
+                                "also you can press shift to dodge",
                                "Have fun and good luck! (press space to start)"]
         self.runningDialogues = []
 
