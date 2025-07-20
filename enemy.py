@@ -2,7 +2,7 @@ import pygame
 from bullet import Bullet
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, pos, target, type, bullet_group):
+    def __init__(self, pos, target, type, bullet_group, hurt_group):
         super().__init__()
         self.image = pygame.Surface((40, 40))
         self.image.fill((255, 0, 0))  # Red
@@ -10,7 +10,9 @@ class Enemy(pygame.sprite.Sprite):
         self.pos = pygame.Vector2(pos)
         self.target = target
         self.type = type
+        self.destroyed = False
         self.enemy_bullets = bullet_group
+        self.hurt_group = hurt_group
 
         if type == 'melee':
             self.speed = 2.5
@@ -22,12 +24,22 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self):
+        
         direction = self.target.pos - self.pos
         if direction.length_squared() > 0:
             direction = direction.normalize()
             self.pos += direction * self.speed
             self.rect.center = self.pos
-        self.attack()
+        if not self.destroyed:
+            self.attack()
+        
+        hits = pygame.sprite.spritecollide(self, self.hurt_group, True)
+        
+        if hits:
+            self.destroyed = True
+            self.kill()
+
+
         
 
     def attack(self):
