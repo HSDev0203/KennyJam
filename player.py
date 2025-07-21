@@ -9,8 +9,23 @@ from utilities import circularity_to_accuracy
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group, enemy_group):
         super().__init__()
-        self.image = pygame.image.load("Assets/tile_0105.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (32, 32))
+
+        player_front_1 = pygame.image.load("Assets/player_front_1.png")
+        player_front_1 = pygame.transform.scale(player_front_1, (32, 32))
+        player_front_2 = pygame.image.load("Assets/player_front_2.png")
+        player_front_2 = pygame.transform.scale(player_front_2, (32, 32))
+        self.player_front_spritesheet = [player_front_1, player_front_2]
+        player_right_1 = pygame.image.load("Assets/player_side_1.png")
+        player_right_1 = pygame.transform.scale(player_right_1, (32, 32))
+        player_right_2 = pygame.image.load("Assets/player_side_2.png")
+        player_right_2 = pygame.transform.scale(player_right_2, (32, 32))
+        self.player_right_spritesheet = [player_right_1, player_right_2]
+        player_left_1 = pygame.transform.flip(player_right_1, True, False)
+        player_left_2 = pygame.transform.flip(player_right_2, True, False)
+        self.player_left_spritesheet = [player_left_1, player_left_2]
+        self.player_index = 0
+
+        self.image = player_front_1
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.Vector2(pos)
         self.health = 3
@@ -40,8 +55,22 @@ class Player(pygame.sprite.Sprite):
         self.max_path_length = 100  # Only keep the last 100 positions
         self.circle_completed = False
 
+    def animation_state(self, keys):
+        if keys[pygame.K_d]:
+            player_spritesheet = self.player_right_spritesheet
+        elif keys[pygame.K_a]:
+            player_spritesheet = self.player_left_spritesheet
+        else:
+            player_spritesheet = self.player_front_spritesheet
+
+        self.player_index += 0.025
+        if self.player_index >= len(player_spritesheet): 
+            self.player_index = 0
+        self.image = player_spritesheet[int(self.player_index)]
 
     def update(self, keys):
+        self.animation_state(keys)
+
         now = pygame.time.get_ticks()
         if now - self.last_dash >= self.dash_delay:
             cooldown = True

@@ -4,9 +4,6 @@ from numpy import append
 import pygame
 from sys import exit
 
-from animation import Animator
-from enemy import Enemy
-from bullet import Bullet
 from player import Player
 from dialogue import DialogueManager
 from hud import Hud
@@ -19,8 +16,15 @@ pygame.display.set_caption("Power Redirect")
 clock = pygame.time.Clock()
 intro = True
 
-ground_tile = pygame.image.load("Assets/tile_0100.png")
+ground_tile = pygame.image.load("Assets/ground_tile.png")
 ground_tile = pygame.transform.scale(ground_tile, (32, 32))
+
+grab_indicator_outline = pygame.image.load("Assets/grab_indicator_outline.png")
+grab_indicator_outline = pygame.transform.scale(grab_indicator_outline, (160, 160))
+grab_indicator_1 = pygame.image.load("Assets/grab_indicator_1.png")
+grab_indicator_1 = pygame.transform.scale(grab_indicator_1, (160, 160))
+grab_indicator_2 = pygame.image.load("Assets/grab_indicator_2.png")
+grab_indicator_2 = pygame.transform.scale(grab_indicator_2, (160, 160))
 
 all_sprites = pygame.sprite.Group()
 enemy_bullets = pygame.sprite.Group()
@@ -44,17 +48,17 @@ score = 0
 game_over_font = pygame.font.Font("Assets/fonts/P8.ttf", 75)
 score_font = pygame.font.Font("Assets/fonts/P8.ttf", 20)
 
-game_over_text_surface_1 = game_over_font.render("GAME OVER", True, (0, 0, 0))
-game_over_text_surface_2 = game_over_font.render("press r to restart", True, (0, 0, 0))
-score_text_surface = score_font.render(f"Score:{score}", True, (0, 0, 0))
+game_over_text_surface_1 = game_over_font.render("GAME OVER", True, 'White')
+game_over_text_surface_2 = game_over_font.render("press r to restart", True, 'White')
+score_text_surface = score_font.render(f"Score:{score}", False, (255, 255, 255))
 
 game_over_text_surface_1_rect = game_over_text_surface_1.get_rect(center = (400,350))
 game_over_text_surface_2_rect = game_over_text_surface_2.get_rect(center = (400,450))
-score_text_rect = score_text_surface.get_rect(topright = (700, 0)) 
+score_text_rect = score_text_surface.get_rect(topright = (700, 32)) 
 
 running = True
 while running:
-    score_text_surface = score_font.render(f"Score: {(score)}", True, (0, 0, 0))
+    score_text_surface = score_font.render(f"Score: {(score)}", False, (255, 255, 255))
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
     bul_in_rad = False
@@ -135,23 +139,41 @@ while running:
             x = col * 32
             y = row * 32
             screen.blit(ground_tile, (x, y))
-    red_overlay = pygame.Surface((800, 800), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
-    
-    if game_over == True:
-        red_overlay.fill((255, 0, 0, 128))  # RGBA (last value is alpha: 0=transparent, 255=opaque)
-        
-        screen.blit(red_overlay, (0, 0))
-
             
     if player.holding_bullet:
-        grab_indicator = pygame.draw.circle(screen, 'Red', player.pos, 75)
+        '''
+        grab_indicator_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
+        grab_indicator_rect = grab_indicator_surf.get_rect(center = (400, 400))
+        grab_indicator = pygame.draw.circle(grab_indicator_surf, (255, 255, 255, 200), player.pos, 75)
+        screen.blit(grab_indicator_surf, grab_indicator_rect)
+        '''
+
+        grab_indicator_2_rect = grab_indicator_2.get_rect(center = player.pos)
+        screen.blit(grab_indicator_2, grab_indicator_2_rect)
+
+        # Draw crosshair on nearest enemy
+        if player.get_nearest_enemy().pos:
+            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, 0), (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y - 16), 2 )
+            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y + 16), (player.get_nearest_enemy().pos.x, 800), 2 )
+            pygame.draw.line(screen, 'White', (0, player.get_nearest_enemy().pos.y), (player.get_nearest_enemy().pos.x - 16, player.get_nearest_enemy().pos.y), 2 )
+            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x + 16, player.get_nearest_enemy().pos.y), (800, player.get_nearest_enemy().pos.y), 2 )
+
         if len(player.mouse_path) > 1:
-            pygame.draw.lines(screen, 'Black', False, player.mouse_path, 5)
+            pygame.draw.lines(screen, 'White', False, player.mouse_path, 5)
     elif bul_in_rad:
-        grab_indicator = pygame.draw.circle(screen, 'Orange', player.pos, 75)
+        '''
+        grab_indicator_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
+        grab_indicator_rect = grab_indicator_surf.get_rect(center = (400, 400))
+        grab_indicator = pygame.draw.circle(grab_indicator_surf, (255, 255, 255, 75), player.pos, 75)
+        screen.blit(grab_indicator_surf, grab_indicator_rect)
+        '''
+        grab_indicator_1_rect = grab_indicator_1.get_rect(center = player.pos)
+        screen.blit(grab_indicator_1, grab_indicator_1_rect)
     else:
         pass
-    grab_indicator_outline = pygame.draw.circle(screen, 'Black', player.pos, 75, 5)
+    grab_indicator_outline_rect = grab_indicator_outline.get_rect(center = player.pos)
+    screen.blit(grab_indicator_outline, grab_indicator_outline_rect)
+    #grab_indicator_outline = pygame.draw.circle(screen, 'White', player.pos, 75, 2)
     all_sprites.draw(screen)
     enemies.draw(screen)
     enemy_bullets.draw(screen)
@@ -163,7 +185,11 @@ while running:
     dialogue_manager.draw()
     hud.draw()
 
+    red_overlay = pygame.Surface((800, 800), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
     if game_over == True:
+
+        red_overlay.fill((0, 0, 0, 175))  # RGBA (last value is alpha: 0=transparent, 255=opaque)
+        screen.blit(red_overlay, (0, 0))
 
         screen.blit(game_over_text_surface_1, game_over_text_surface_1_rect)
         screen.blit(game_over_text_surface_2, game_over_text_surface_2_rect)
