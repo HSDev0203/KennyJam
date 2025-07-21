@@ -141,12 +141,6 @@ while running:
             screen.blit(ground_tile, (x, y))
             
     if player.holding_bullet:
-        '''
-        grab_indicator_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
-        grab_indicator_rect = grab_indicator_surf.get_rect(center = (400, 400))
-        grab_indicator = pygame.draw.circle(grab_indicator_surf, (255, 255, 255, 200), player.pos, 75)
-        screen.blit(grab_indicator_surf, grab_indicator_rect)
-        '''
 
         grab_indicator_2_rect = grab_indicator_2.get_rect(center = player.pos)
         screen.blit(grab_indicator_2, grab_indicator_2_rect)
@@ -158,15 +152,8 @@ while running:
             pygame.draw.line(screen, 'White', (0, player.get_nearest_enemy().pos.y), (player.get_nearest_enemy().pos.x - 16, player.get_nearest_enemy().pos.y), 2 )
             pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x + 16, player.get_nearest_enemy().pos.y), (800, player.get_nearest_enemy().pos.y), 2 )
 
-        if len(player.mouse_path) > 1:
-            pygame.draw.lines(screen, 'White', False, player.mouse_path, 5)
     elif bul_in_rad:
-        '''
-        grab_indicator_surf = pygame.Surface((800, 800), pygame.SRCALPHA)
-        grab_indicator_rect = grab_indicator_surf.get_rect(center = (400, 400))
-        grab_indicator = pygame.draw.circle(grab_indicator_surf, (255, 255, 255, 75), player.pos, 75)
-        screen.blit(grab_indicator_surf, grab_indicator_rect)
-        '''
+
         grab_indicator_1_rect = grab_indicator_1.get_rect(center = player.pos)
         screen.blit(grab_indicator_1, grab_indicator_1_rect)
     else:
@@ -177,13 +164,11 @@ while running:
     all_sprites.draw(screen)
     enemies.draw(screen)
     enemy_bullets.draw(screen)
-    '''
-    for projectile in enemy_bullets:
-        if projectile.animation:
-            projectile.animation.play()
-    '''
     dialogue_manager.draw()
     hud.draw()
+
+    if player.holding_bullet and (len(player.mouse_path) > 1):
+        pygame.draw.lines(screen, 'White', False, player.mouse_path, 5)
 
     red_overlay = pygame.Surface((800, 800), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
     if game_over == True:
