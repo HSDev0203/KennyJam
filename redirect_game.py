@@ -46,7 +46,7 @@ game_over = False
 score = 0
 
 game_over_font = pygame.font.Font("Assets/fonts/P8.ttf", 75)
-score_font = pygame.font.Font("Assets/fonts/P8.ttf", 20)
+score_font = pygame.font.Font("Assets/fonts/EightBitDragon.ttf", 18)
 
 game_over_text_surface_1 = game_over_font.render("GAME OVER", True, 'White')
 game_over_text_surface_2 = game_over_font.render("press r to restart", True, 'White')
@@ -54,7 +54,7 @@ score_text_surface = score_font.render(f"Score:{score}", False, (255, 255, 255))
 
 game_over_text_surface_1_rect = game_over_text_surface_1.get_rect(center = (400,350))
 game_over_text_surface_2_rect = game_over_text_surface_2.get_rect(center = (400,450))
-score_text_rect = score_text_surface.get_rect(topright = (700, 32)) 
+score_text_rect = score_text_surface.get_rect(topleft = (650, 39)) 
 
 running = True
 while running:
