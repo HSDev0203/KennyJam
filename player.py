@@ -1,10 +1,12 @@
 import time
 import pygame
 from bullet import Bullet
+import soundeffects
 from utilities import is_circle
 from utilities import calculate_circularity
 from utilities import circularity_to_accuracy
-
+import soundeffects
+from random import randint
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, hurt_group, holding_bullet, player_bullets_group, all_sprites_group, enemy_group):
@@ -94,10 +96,14 @@ class Player(pygame.sprite.Sprite):
             self.speed = 20
             self.is_dashing = True
             self.last_dash = pygame.time.get_ticks()
+            if abs(self.direction.x) > 0 or abs(self.direction.y) > 0:
+                soundeffects.dash_sound.play()
+
         if self.speed > 5:
             self.speed -= 1
         else: 
             self.is_dashing = False
+
 
         if self.direction.length_squared() > 0:
             self.direction = self.direction.normalize()
@@ -109,11 +115,13 @@ class Player(pygame.sprite.Sprite):
         if hits_enemy and self.health > 0 and now - self.last_hit > self.invinsibility_time:
             self.health -= 1  # Apply damage
             self.last_hit = pygame.time.get_ticks()
+            soundeffects.player_hurt_sound.play()
         for sprite in self.hurt_group:
             hits_bullet = pygame.sprite.spritecollide(self, sprite.enemy_bullets, True)
             if hits_bullet and self.health > 0 and now - self.last_hit > self.invinsibility_time:
                 self.health -= 1  # Apply damage
                 self.last_hit = pygame.time.get_ticks()
+                soundeffects.player_hurt_sound.play()
         
         if self.holding_bullet:
             self.mouse_path.append(pygame.mouse.get_pos())
@@ -175,6 +183,8 @@ class Player(pygame.sprite.Sprite):
         # Add to sprite groups
         self.player_bullets_group.add(bullet)
         self.all_sprites_group.add(bullet)
+        soundeffects.attack_sounds[randint(0, len(soundeffects.attack_sounds) - 1)].play()
+
 
 
 

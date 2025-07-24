@@ -8,6 +8,7 @@ from player import Player
 from dialogue import DialogueManager
 from hud import Hud
 from gameManager import GameManager
+import soundeffects
 
 pygame.init()
 
@@ -43,6 +44,7 @@ dialogue_manager = DialogueManager(screen)
 dialogue_manager.runningDialogues = dialogue_manager.introDiologues
 dialog_key = False
 game_over = False
+loss_sound_toggle = True
 score = 0
 
 game_over_font = pygame.font.Font("Assets/fonts/P8.ttf", 75)
@@ -86,6 +88,7 @@ while running:
                 clock = pygame.time.Clock()
                 intro = True
                 score = 0
+                loss_sound_toggle = True
 
                 all_sprites = pygame.sprite.Group()
                 enemy_bullets = pygame.sprite.Group()
@@ -146,11 +149,14 @@ while running:
         screen.blit(grab_indicator_2, grab_indicator_2_rect)
 
         # Draw crosshair on nearest enemy
-        if player.get_nearest_enemy().pos:
-            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, 0), (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y - 16), 2 )
-            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y + 16), (player.get_nearest_enemy().pos.x, 800), 2 )
-            pygame.draw.line(screen, 'White', (0, player.get_nearest_enemy().pos.y), (player.get_nearest_enemy().pos.x - 16, player.get_nearest_enemy().pos.y), 2 )
-            pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x + 16, player.get_nearest_enemy().pos.y), (800, player.get_nearest_enemy().pos.y), 2 )
+        try:
+            if player.get_nearest_enemy().pos != None:
+                pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, 0), (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y - 16), 2 )
+                pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x, player.get_nearest_enemy().pos.y + 16), (player.get_nearest_enemy().pos.x, 800), 2 )
+                pygame.draw.line(screen, 'White', (0, player.get_nearest_enemy().pos.y), (player.get_nearest_enemy().pos.x - 16, player.get_nearest_enemy().pos.y), 2 )
+                pygame.draw.line(screen, 'White', (player.get_nearest_enemy().pos.x + 16, player.get_nearest_enemy().pos.y), (800, player.get_nearest_enemy().pos.y), 2 )
+        except:
+            print("tried to access unknown enemy")
 
     elif bul_in_rad:
 
@@ -173,6 +179,10 @@ while running:
     red_overlay = pygame.Surface((800, 800), pygame.SRCALPHA)  # Use SRCALPHA for per-pixel alpha
     if game_over == True:
 
+        if loss_sound_toggle:
+            soundeffects.game_loss_sound.play()
+        loss_sound_toggle = False
+        
         red_overlay.fill((0, 0, 0, 175))  # RGBA (last value is alpha: 0=transparent, 255=opaque)
         screen.blit(red_overlay, (0, 0))
 

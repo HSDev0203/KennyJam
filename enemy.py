@@ -1,5 +1,7 @@
 import pygame
 from bullet import Bullet
+import soundeffects
+from random import randint
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, target, type, bullet_group, hurt_group):
@@ -48,6 +50,7 @@ class Enemy(pygame.sprite.Sprite):
                     self.last_shot = now
                     self.is_shooting = True
                     self.shoot_frame_timer = 0
+                    soundeffects.attack_sounds[randint(0, len(soundeffects.attack_sounds) - 1)].play()
 
 
     def animation_state(self):
@@ -80,6 +83,7 @@ class Enemy(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.hurt_group, True)
         
         if hits:
+            soundeffects.enemy_hurt_sound.play() 
             self.destroyed = True
             self.kill()
             

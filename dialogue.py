@@ -1,4 +1,5 @@
 import pygame
+import soundeffects
 
 class DialogueManager:
     def __init__(self, screen):
@@ -31,6 +32,7 @@ class DialogueManager:
         if self.running:
             if skip_key:
                 self.current_line += 1
+                soundeffects.text_skip_sound.play()
                 if self.current_line >= len(self.runningDialogues):
                     self.running = False  # End dialogue
 
