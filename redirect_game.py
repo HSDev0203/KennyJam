@@ -56,15 +56,19 @@ score_text_surface = score_font.render(f"Score:{score}", False, (255, 255, 255))
 
 game_over_text_surface_1_rect = game_over_text_surface_1.get_rect(center = (400,350))
 game_over_text_surface_2_rect = game_over_text_surface_2.get_rect(center = (400,450))
-score_text_rect = score_text_surface.get_rect(topleft = (650, 39)) 
+score_text_rect = score_text_surface.get_rect(topleft = (650, 39))
+start_button = score_text_surface.get_rect(topleft = (650, 39))
 
-running = True
+running = True 
+
+
 while running:
     score_text_surface = score_font.render(f"Score: {(score)}", False, (255, 255, 255))
     dt = clock.tick(60)
     keys = pygame.key.get_pressed()
     bul_in_rad = False
 
+        # Update
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -108,11 +112,10 @@ while running:
                 dialog_key = False
                 game_over = False
             
-            
+        
     if(player.health <= 0):
         game_over = True
 
-    # Update
 
     if intro == False and game_over == False:
         score += 1
@@ -191,6 +194,6 @@ while running:
 
     screen.blit(score_text_surface, score_text_rect)
     pygame.display.flip()
-
+    
 pygame.quit()
 exit()

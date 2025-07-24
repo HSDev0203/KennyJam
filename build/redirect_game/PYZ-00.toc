@@ -27,10 +27,6 @@
   ('_threading_local',
    'C:\\Users\\Wonde\\AppData\\Local\\Programs\\Python\\Python310\\lib\\_threading_local.py',
    'PYMODULE'),
-  ('animation',
-   'C:\\Users\\Wonde\\OneDrive\\Desktop\\Project '
-   'Files\\Python\\GameJam\\animation.py',
-   'PYMODULE'),
   ('argparse',
    'C:\\Users\\Wonde\\AppData\\Local\\Programs\\Python\\Python310\\lib\\argparse.py',
    'PYMODULE'),
@@ -1288,6 +1284,10 @@
    'PYMODULE'),
   ('socketserver',
    'C:\\Users\\Wonde\\AppData\\Local\\Programs\\Python\\Python310\\lib\\socketserver.py',
+   'PYMODULE'),
+  ('soundeffects',
+   'C:\\Users\\Wonde\\OneDrive\\Desktop\\Project '
+   'Files\\Python\\GameJam\\soundeffects.py',
    'PYMODULE'),
   ('ssl',
    'C:\\Users\\Wonde\\AppData\\Local\\Programs\\Python\\Python310\\lib\\ssl.py',

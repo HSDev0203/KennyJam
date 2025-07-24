@@ -183,7 +183,7 @@ class Player(pygame.sprite.Sprite):
         # Add to sprite groups
         self.player_bullets_group.add(bullet)
         self.all_sprites_group.add(bullet)
-        soundeffects.attack_sounds[randint(0, len(soundeffects.attack_sounds) - 1)].play()
+        soundeffects.player_shoot_sound.play()
 
 
 
