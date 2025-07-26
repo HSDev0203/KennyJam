@@ -50,8 +50,7 @@ class Enemy(pygame.sprite.Sprite):
                     self.last_shot = now
                     self.is_shooting = True
                     self.shoot_frame_timer = 0
-                    if not (self.pos.x < 0 or self.pos.x > 800 or self.pos.y < 0 or self.pos.y > 800):
-                        soundeffects.attack_sounds[randint(0, len(soundeffects.attack_sounds) - 1)].play()
+                    soundeffects.attack_sounds[randint(0, len(soundeffects.attack_sounds) - 1)].play()
 
 
     def animation_state(self):
