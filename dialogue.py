@@ -8,10 +8,10 @@ class DialogueManager:
         self.introDiologues = ["Welcome to Re-Direct! (press space to continue)", 
                                 "In this game, you use your enemy's POWER against them...",
                                 "When an enemy's BULLET is within your GRAB RADIUS,",
-                                "Left click or press E."
+                                "Left click or press E.",
                                 "Then, draw a circle with your cursor to REDIRECT",
                                 "their attack back at them!",
-                                "Use WASD to move and press shift to DODGE",
+                                "Use WASD to move and press shift to DODGE.",
                                 "Have fun and good luck! (press space to start)"]
         self.runningDialogues = []
 
@@ -26,7 +26,7 @@ class DialogueManager:
         self.current_line = 0
 
         # Dialogue box dimensions
-        self.dialogue_box = pygame.Rect(0, 600, 800, 200)
+        self.dialogue_box = pygame.Rect(20, 600, 760, 60)
 
         self.running = True
 
@@ -46,5 +46,5 @@ class DialogueManager:
             pygame.draw.rect(self.screen, self.BLACK, self.dialogue_box.inflate(-4, -4))
 
             text_surface = self.font.render(self.runningDialogues[self.current_line], False, self.WHITE)
-            self.screen.blit(text_surface, (self.dialogue_box.x + 20, self.dialogue_box.y + 40))
+            self.screen.blit(text_surface, (self.dialogue_box.x + 20, self.dialogue_box.y + 20))
 
